@@ -33,7 +33,7 @@ class GreedyAgent(Agent):
         to be returned. 
         betrayals_required are the number of betrayals required for the mission to fail.
         '''
-        team = [self.index]
+        team = [self.player_number]
         while len(team)<team_size:
             agent = random.randrange(team_size)
             if agent not in team:
@@ -47,12 +47,13 @@ class GreedyAgent(Agent):
         proposer is an int between 0 and number_of_players and is the index of the player who proposed the mission.
         The function should return True if the vote is for the mission, and False if the vote is against the mission.
         '''
-        if self.index in mission:
+        if self.player_number in mission:
             return True
         if self.is_spy():
             spy_set = set(self.spy_list)
             team_set = set(mission)
             return not team_set.isdisjoint(spy_set)
+        return False
 
     def vote_outcome(self, mission, proposer, votes):
         '''
@@ -105,8 +106,19 @@ class GreedyAgent(Agent):
         spies_win, True iff the spies caused 3+ missions to fail
         spies, a list of the player indexes for the spies.
         '''
-        #nothing to do here
-        pass
+        print(self.name, self.player_number, self.is_spy())
+        if self.is_spy():
+            if spies_win:
+                print(self.name, 'win as spy')
+            else:
+                print(self.name, 'loss as spy')
+        else:
+            if spies_win:
+                print(self.name, 'loss as resistanter')
+            else:
+                print(self.name, 'win as resistanter')
+
+        
 
 
 

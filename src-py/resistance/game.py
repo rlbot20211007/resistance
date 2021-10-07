@@ -1,6 +1,7 @@
 from agent import Agent
 from random_agent import RandomAgent
 import random
+import copy
 
 class Game:
     '''
@@ -23,12 +24,8 @@ class Game:
         if len(agents)<5 or len(agents)>10:
             raise Exception('Agent array out of range')
         #clone and shuffle agent array
-        self.agents = agents.copy()
+        self.agents = copy.deepcopy(agents)
         random.shuffle(self.agents)
-
-        # update index
-        for ind, agent in self.agents:
-            agent.index = ind
 
         self.num_players = len(agents)
         #allocate spies
@@ -39,7 +36,7 @@ class Game:
                 self.spies.append(spy)
         #start game for each agent        
         for agent_id in range(self.num_players):
-            spy_list = self.spies.copy() if agent_id in self.spies else []
+            spy_list = copy.deepcopy(self.spies) if agent_id in self.spies else []
             self.agents[agent_id].new_game(self.num_players,agent_id, spy_list)
         #initialise rounds
         self.missions_lost = 0
@@ -65,7 +62,7 @@ class Game:
             s = s + '\nThe Resistance succeeded!'
         else:
             s = s + '\nThe Resistance failed!'
-        s = s + 'The spies were agents: '+ str(self.spies)    
+        s = s + 'The spies were agents: '+ str([self.agents[ind].name for ind in self.spies])    
         return s    
 
 class Round():
@@ -192,6 +189,8 @@ class Mission():
         '''
         Creates formal (json) representation of the mission
         '''
+        # here is a bug in previous version
+        leader_id = 0
         return 'Mission(leader_id='+ self.agents[leader_id] \
                        + ', team='+self.team \
                        +', agents='+self.agents \
