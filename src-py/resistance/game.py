@@ -25,6 +25,11 @@ class Game:
         #clone and shuffle agent array
         self.agents = agents.copy()
         random.shuffle(self.agents)
+
+        # update index
+        for ind, agent in self.agents:
+            agent.index = ind
+
         self.num_players = len(agents)
         #allocate spies
         self.spies = []
