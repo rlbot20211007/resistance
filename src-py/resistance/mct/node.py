@@ -1,12 +1,21 @@
-from copy import copy
+import copy
 from math import log, sqrt
+
+
+def getIndexOfList(l):
+    k = 1
+    ret = 0
+    for s in l:
+        ret += s * k
+        k *= 10
+    return str(ret)
 
 
 def getPropose(childrenDict, startIndex, playerSize, prefix, missionSize):
     if startIndex + missionSize > playerSize:
         return
     elif missionSize == 0:
-        childrenDict[prefix] = (0,0)
+        childrenDict[getIndexOfList(prefix)] = [0, 0]
         return
     else:
         for i in range(startIndex, playerSize):
@@ -15,48 +24,42 @@ def getPropose(childrenDict, startIndex, playerSize, prefix, missionSize):
 
 
 class BaseNode:
-    def __init__(self):
-        # action: (count of win, count of visit)
-        # cannot use the next state as index, for that is not sure
-        self.children = {}
 
-
-    
-    def chooseAction(self, c):
+    @staticmethod
+    def chooseAction(children, c):
         n = 0
-        for key in self.children:
-            if self.children[key][1] == 0 :
+        for key in children:
+            if children[key][1] == 0 :
                 return key, 0
+            n += children[key][1]
         log_n = log(n)
-        l = [((self.children[key][0] / self.children[key][1] + c * sqrt(log_n /  self.children[key][1])), key) for key in self.children]
+        l = [((children[key][0] / children[key][1] + c * sqrt(log_n /  children[key][1])), key) for key in children]
         l.sort()
         action = l[-1][1]
-        return action, self.children[key][0] / self.children[key][1]
+        return action, children[key][0] / children[key][1]
 
     @staticmethod
     def createVoteNode():
-        voteNode = BaseNode()
-        voteNode.children = {
-            True: (0,0),
-            False: (0,0)
+        children = {
+            True: [0, 0],
+            False: [0, 0]
         }
 
-        return voteNode
+        return children
 
     @staticmethod
     def createProposeNode(missionSize, playerSize):
-        proposeNode = BaseNode()
-        getPropose(proposeNode.children, 0, playerSize, (), missionSize)
-        return proposeNode
+        children = {}
+        getPropose(children, 0, playerSize, (), missionSize)
+        return children
 
     @staticmethod
     def createBetrayNode():
-        betrayNode = BaseNode()
-        betrayNode.children = {
-            True: (0,0),
-            False: (0,0)
+        children = {
+            True: [0, 0],
+            False: [0, 0]
         }
-        return betrayNode
+        return children
 
 
 

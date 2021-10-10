@@ -1,17 +1,16 @@
 """
-run the file by `python src-py/test_1g6r.py`
-the score board for 10 games 
-('r5', {'spy': [2, 4], 'total': [6, 10], 'resistance': [4, 6]})
-('r6', {'spy': [1, 5], 'total': [3, 10], 'resistance': [2, 5]})
-('g1', {'spy': [1, 1], 'total': [7, 10], 'resistance': [6, 9]})
-('r7', {'spy': [4, 6], 'total': [8, 10], 'resistance': [4, 4]})
-('r3', {'spy': [0, 4], 'total': [2, 10], 'resistance': [2, 6]})
-('r4', {'spy': [2, 4], 'total': [6, 10], 'resistance': [4, 6]})
-('r2', {'spy': [2, 6], 'total': [4, 10], 'resistance': [2, 4]})
+run the file by `python3 src-py/test_1m4r.py`
+
+[with pretrain]: the score board for 100 games  --> cannot KO the greedy
+g3 {'spy': [39, 39], 'resistance': [1, 61], 'total': [40, 100]}
+g5 {'spy': [37, 37], 'resistance': [1, 63], 'total': [38, 100]}
+g2 {'spy': [42, 43], 'resistance': [0, 57], 'total': [42, 100]}
+m1 {'spy': [39, 39], 'resistance': [1, 61], 'total': [40, 100]}
+g4 {'spy': [41, 42], 'resistance': [0, 58], 'total': [41, 100]}
 """
 
 from resistance.game import Game
-from resistance.random_agent import RandomAgent
+from resistance.mct.mct_agent import MCTAgent
 from resistance.mct.greedy_agent import GreedyAgent
 
 
@@ -19,9 +18,17 @@ def test(n_game, players):
 
     scoreboard = {agent.name:{'spy':[0, 0], 'resistance':[0, 0], 'total':[0, 0]} for agent in players}
 
+    mctnodes = MCTAgent.load('mctnodes_dict.json',)
+
     for game_ind in range(n_game):
         print(game_ind, 'start')
         game = Game(players)
+
+        for agent in game.agents:
+            if type(agent) == MCTAgent:
+                agent.mctNodes = mctnodes
+
+
         game.play()
         for agent in game.agents:
             if agent.is_spy():
@@ -41,13 +48,11 @@ def test(n_game, players):
             
             print(agent.name, scoreboard[agent.name])
 
-agents = [GreedyAgent(name='g1'), 
-        RandomAgent(name='r2'),  
-        RandomAgent(name='r3'),  
-        RandomAgent(name='r4'),  
-        RandomAgent(name='r5'),  
-        RandomAgent(name='r6'),  
-        RandomAgent(name='r7')]
+agents = [MCTAgent(name='m1', sharedMctNodes={}, isTest=True),
+        GreedyAgent(name='g2'),  
+        GreedyAgent(name='g3'),  
+        GreedyAgent(name='g4'),  
+        GreedyAgent(name='g5'),]
 
 test(10, agents)                
 
