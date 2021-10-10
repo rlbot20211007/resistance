@@ -1,6 +1,6 @@
-from ..resistance.agent import Agent
+from ..agent import Agent
 from ..greedy_rule.greedy_agent import GreedyAgent
-from ..resistance.random_agent import RandomAgent
+from ..random_agent import RandomAgent
 from .node import BaseNode
 
 def getIndexOfList(l:list):

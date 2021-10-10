@@ -1,4 +1,4 @@
-from ..resistance.random_agent import RandomAgent
+from ..random_agent import RandomAgent
 import random
 
 class GreedyAgent(RandomAgent):
@@ -9,7 +9,7 @@ class GreedyAgent(RandomAgent):
         Initialises the agent.
         Nothing to do here.
         '''
-        super.__init__(name)
+        RandomAgent.__init__(self, name)
 
 
     def propose_mission(self, team_size, betrayals_required = 1):
@@ -18,7 +18,7 @@ class GreedyAgent(RandomAgent):
         to be returned. 
         betrayals_required are the number of betrayals required for the mission to fail.
         '''
-        if self.is_spy and betrayals_required > 1:
+        if self.is_spy() and betrayals_required > 1:
             team = list(random.sample(self.spy_list, betrayals_required))
         else:
             team = [self.player_number]
@@ -52,7 +52,6 @@ class GreedyAgent(RandomAgent):
         The method should return True if this agent chooses to betray the mission, and False otherwise. 
         By default, spies will betray 30% of the time. 
         '''
-        print('---------------betray')
         if self.is_spy():
             return True
         else:

@@ -11,6 +11,7 @@ Round*.txt
 *.jar
 *.war
 *.ear
+*.pyc
 
 Agents/
 

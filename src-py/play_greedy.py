@@ -1,7 +1,7 @@
-from random_agent import RandomAgent
-from game import Game
+from resistance.random_agent import RandomAgent
+from resistance.game import Game
 
-from greedy_agent import GreedyAgent
+from resistance.greedy_rule.greedy_agent import GreedyAgent
 
 agents = [GreedyAgent(),
         RandomAgent(name='r2'),  
