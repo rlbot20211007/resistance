@@ -1,8 +1,7 @@
-import copy
 from ..resistance.agent import Agent
 from ..greedy_rule.greedy_agent import GreedyAgent
+from ..resistance.random_agent import RandomAgent
 from .node import BaseNode
-import random
 
 def getIndexOfList(l:list):
     k = 1
@@ -13,7 +12,7 @@ def getIndexOfList(l:list):
     return ret
 
 
-class MCTAgent(Agent):        
+class MCTAgent(RandomAgent):        
     '''A sample implementation of a random agent in the game The Resistance'''
 
     def __init__(self, name='Mct', sharedMctNodes = None):
@@ -21,7 +20,7 @@ class MCTAgent(Agent):
         Initialises the agent.
         Nothing to do here.
         '''
-        self.name = name
+        super.__init__(name)
 
         if sharedMctNodes:
             self.mctNodes = {}
@@ -179,9 +178,10 @@ class MCTAgent(Agent):
     def game_outcome(self, spies_win, spies):
         '''
         basic informative function, where the parameters indicate:
-        spies_win, True iff the spies caused 3+ missions to fail
-        spies, a list of the player indexes for the spies.
+        spies_win, True iff the spies caused 3+ missions to fail--> a.game_outcome(self.missions_lost<3, self.spies)
+        spies, a list of the player indexes for the spies.    
         '''
+        spies_win = not spies_win
         win = (self.is_spy and spies_win) or ((not self.is_spy()) and (not spies_win))
 
         for node, act in self.trajectory:
