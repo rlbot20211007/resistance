@@ -2,6 +2,8 @@
 *.html
 Round*.txt
 
+.idea/*
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -9,6 +11,7 @@ Round*.txt
 *.jar
 *.war
 *.ear
+*.pyc
 
 Agents/
 
