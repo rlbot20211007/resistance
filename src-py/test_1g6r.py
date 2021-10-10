@@ -12,7 +12,7 @@ the score board for 10 games
 
 from resistance.game import Game
 from resistance.random_agent import RandomAgent
-from resistance.greedy_rule.greedy_agent import GreedyAgent
+from resistance.mct.greedy_agent import GreedyAgent
 
 
 def test(n_game, players):

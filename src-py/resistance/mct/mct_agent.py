@@ -1,9 +1,8 @@
-from ..agent import Agent
-from ..greedy_rule.greedy_agent import GreedyAgent
+from .greedy_agent import GreedyAgent
 from ..random_agent import RandomAgent
 from .node import BaseNode
 
-def getIndexOfList(l:list):
+def getIndexOfList(l):
     k = 1
     ret = 0
     for s in l:
@@ -40,7 +39,7 @@ class MCTAgent(RandomAgent):
         self.currentstate = (getIndexOfList([self.number_of_players , self.round_index , self.mission_index]), getIndexOfList([self.player_number, ] + self.spy_list), getIndexOfList(mission))
         
 
-    def new_game(self, number_of_players:int, player_number:int, spy_list:list):
+    def new_game(self, number_of_players, player_number, spy_list):
         '''
         initialises the game, informing the agent of the 
         number_of_players, the player_number (an id number for the agent in the game),
@@ -83,7 +82,7 @@ class MCTAgent(RandomAgent):
             self.trajectory.append((self.mctNodes[self.currentstate], mct_action))
             return mct_action     
 
-    def vote(self, mission:list, proposer:int):
+    def vote(self, mission, proposer):
         '''
         mission is a list of agents to be sent on a mission. 
         The agents on the mission are distinct and indexed between 0 and number_of_players.

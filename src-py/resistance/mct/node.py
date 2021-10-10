@@ -2,7 +2,7 @@ from copy import copy
 from math import log, sqrt
 
 
-def getPropose(childrenDict:dict, startIndex:int, playerSize:int, prefix:tuple, missionSize:int):
+def getPropose(childrenDict, startIndex, playerSize, prefix, missionSize):
     if startIndex + missionSize > playerSize:
         return
     elif missionSize == 0:
@@ -15,7 +15,7 @@ def getPropose(childrenDict:dict, startIndex:int, playerSize:int, prefix:tuple, 
 
 
 class BaseNode:
-    def __init__(self) -> None:
+    def __init__(self):
         # action: (count of win, count of visit)
         # cannot use the next state as index, for that is not sure
         self.children = {}
