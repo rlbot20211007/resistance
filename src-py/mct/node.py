@@ -1,4 +1,5 @@
 from copy import copy
+from math import log, sqrt
 
 
 def getPropose(childrenDict:dict, startIndex:int, playerSize:int, prefix:tuple, missionSize:int):
@@ -15,19 +16,22 @@ def getPropose(childrenDict:dict, startIndex:int, playerSize:int, prefix:tuple, 
 
 class BaseNode:
     def __init__(self) -> None:
-        # action: (count of resistantWin, count of visit)
+        # action: (count of win, count of visit)
+        # cannot use the next state as index, for that is not sure
         self.children = {}
-        # true complete ; False incomplete
-        self.state = False
+
 
     
-    def get_unvisit(self):
-        unvisit = []
+    def chooseAction(self, c):
+        n = 0
         for key in self.children:
             if self.children[key][1] == 0 :
-                unvisit.append(key)
-        
-        return unvisit, self.children.keys()
+                return key, 0
+        log_n = log(n)
+        l = [((self.children[key][0] / self.children[key][1] + c * sqrt(log_n /  self.children[key][1])), key) for key in self.children]
+        l.sort()
+        action = l[-1][1]
+        return action, self.children[key][0] / self.children[key][1]
 
     @staticmethod
     def createVoteNode():
@@ -46,7 +50,14 @@ class BaseNode:
         return proposeNode
 
     @staticmethod
-    def updateNode(nodeActionList, resistantWin):
-        if resistantWin:
-            for node, action in nodeActionList:
-                node[action][0] += 1
+    def createBetrayNode():
+        betrayNode = BaseNode()
+        betrayNode.children = {
+            True: (0,0),
+            False: (0,0)
+        }
+        return betrayNode
+
+
+
+            

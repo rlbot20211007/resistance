@@ -38,7 +38,7 @@ class GreedyAgent(Agent):
         else:
             team = [self.player_number]
         while len(team)<team_size:
-            agent = random.randrange(team_size)
+            agent = random.randrange(self.number_of_players)
             if agent not in team:
                 team.append(agent)
         return team        
