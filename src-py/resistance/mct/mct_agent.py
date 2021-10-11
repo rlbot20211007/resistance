@@ -29,6 +29,7 @@ class MCTAgent(RandomAgent):
     def get_state(self, mission):
         # while a trajectory is better, it is hard to store.
         currentstate = (getIndexOfList([self.number_of_players , self.round_index , self.mission_index]), getIndexOfList([self.player_number, ] + self.spy_list), getIndexOfList(mission))
+        # save state string to self.currentstate
         self.currentstate = "-".join(currentstate)
         
 
@@ -38,12 +39,16 @@ class MCTAgent(RandomAgent):
         number_of_players, the player_number (an id number for the agent in the game),
         and a list of agent indexes which are the spies, if the agent is a spy, or empty otherwise
         '''
+        # update greedy policy
         if (self.isTest):
             self.greedy.new_game(number_of_players, player_number, spy_list)
 
+        # store game feature
         self.number_of_players = number_of_players
         self.player_number = player_number
         self.spy_list = spy_list
+
+        # initial
         self.round_index = 0
         self.mission_index = 0
         return
@@ -62,12 +67,18 @@ class MCTAgent(RandomAgent):
         to be returned. 
         betrayals_required are the number of betrayals required for the mission to fail.
         '''
+        # update state
         self.get_state(mission=[self.player_number,])
+
+        # get mct action
         if not self.currentstate in self.mctNodes:
             self.mctNodes[self.currentstate] = BaseNode.createProposeNode(team_size, playerSize=self.number_of_players)
         mct_action, win_rate =  BaseNode.chooseAction(self.mctNodes[self.currentstate], self.C)
 
+        # if in test mode, and win_rate is ralatively low
         if self.isTest and (win_rate < 0.5):
+
+            # get rule action
             rule_act = self.greedy.propose_mission(team_size, betrayals_required)
             rule_act.sort()
             self.trajectory.append((self.mctNodes[self.currentstate], getIndexOfList(rule_act)))
@@ -75,6 +86,7 @@ class MCTAgent(RandomAgent):
         else:
             self.trajectory.append((self.mctNodes[self.currentstate], mct_action))
 
+            # recover propose list from action string
             k = 1
             team = []
             action = int(mct_action)
@@ -117,14 +129,18 @@ class MCTAgent(RandomAgent):
         votes is a dictionary mapping player indexes to Booleans (True if they voted for the mission, False otherwise).
         No return value is required or expected.
         '''
+        # update state
         votes.sort()        
         nodeIndex = self.currentstate + '-' +getIndexOfList(votes)
         self.mission_index += 1
 
+        # if not a spy, store the node as a null node
         if not self.is_spy():
             if not nodeIndex in self.mctNodes:
                 self.mctNodes[nodeIndex] = None
             self.trajectory.append((self.mctNodes[nodeIndex], None))
+        
+        # wait until betray node
         else:
             self.currentstate = nodeIndex
         return
@@ -137,6 +153,8 @@ class MCTAgent(RandomAgent):
         The method should return True if this agent chooses to betray the mission, and False otherwise. 
         By default, spies will betray 30% of the time. 
         '''
+
+        # only spy need to deal with the action
         if self.is_spy():
             if not self.currentstate in self.mctNodes:
                 self.mctNodes[self.currentstate] = BaseNode.createBetrayNode()
@@ -159,6 +177,7 @@ class MCTAgent(RandomAgent):
         and mission_success is True if there were not enough betrayals to cause the mission to fail, False otherwise.
         It iss not expected or required for this function to return anything.
         '''
+        # get state, store the node as a null node
         nodeIndex = self.currentstate + '-' + getIndexOfList((betrayals, 1 if mission_success else 0),)
         if not nodeIndex in self.mctNodes:
             self.mctNodes[nodeIndex] = None
@@ -171,6 +190,7 @@ class MCTAgent(RandomAgent):
         rounds_complete, the number of rounds (0-5) that have been completed
         missions_failed, the numbe of missions (0-3) that have failed.
         '''
+        # update mission_index, round_index
         self.mission_index = 0
         self.round_index = rounds_complete
         return
@@ -184,9 +204,9 @@ class MCTAgent(RandomAgent):
         spies_win = not spies_win
         win = (self.is_spy and spies_win) or ((not self.is_spy()) and (not spies_win))
 
+        # update node
         for node, act in self.trajectory:
             if node:
-
                 node[act][0] += (1 if win else 0)
                 node[act][1] += 1
         return
@@ -209,7 +229,7 @@ class MCTAgent(RandomAgent):
     def save(path, mctnodes):
         print('save!')
         b = json.dumps(mctnodes)
-        f2 = open('mctnodes_dict.json', 'w')
+        f2 = open(path, 'w')
         f2.write(b)
         f2.close()
         return

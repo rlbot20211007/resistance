@@ -29,8 +29,8 @@ def test(n_game, players):
 
     scoreboard = {agent.name:{'spy':[0, 0], 'resistance':[0, 0], 'total':[0, 0]} for agent in players}
 
-    mctnodes = {}
-    # mctnodes = MCTAgent.load('mctnodes_dict.json',)
+    # mctnodes = {}
+    mctnodes = MCTAgent.load('mctnodes_dict.json',)
 
 
     for game_ind in range(n_game):
